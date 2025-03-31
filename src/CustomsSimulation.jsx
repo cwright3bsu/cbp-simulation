@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const profiles = [
   {
@@ -50,35 +50,44 @@ export default function CustomsSimulation() {
   const [log, setLog] = useState([]);
   const [input, setInput] = useState("");
   const [score, setScore] = useState(null);
+  const [questionCount, setQuestionCount] = useState(0);
+
+  useEffect(() => {
+    // Show the opening scenario only once at the beginning
+    setLog([{ type: "traveler", text: profile.scenario }]);
+  }, [profile]);
 
   const handleQuestion = () => {
     const newLog = [...log, { type: "student", text: input }];
     const lower = input.toLowerCase();
 
-    let scoreCount = 0;
-    let feedback = [];
+    let newScore = score || { total: 0, feedback: [], checks: [] };
 
     profile.requiredQuestions.forEach((req) => {
-      if (lower.includes(req)) {
-        scoreCount += 10;
-        feedback.push(`✅ Asked about: ${req}`);
+      if (lower.includes(req) && !newScore.checks.includes(req)) {
+        newScore.total += 10;
+        newScore.feedback.push(`✅ Asked about: ${req}`);
+        newScore.checks.push(req);
       }
     });
 
     profile.redFlags.forEach((flag) => {
-      if (lower.includes(flag)) {
-        scoreCount += 15;
-        feedback.push(`🚩 Identified red flag: ${flag}`);
+      if (lower.includes(flag) && !newScore.checks.includes(flag)) {
+        newScore.total += 15;
+        newScore.feedback.push(`🚩 Identified red flag: ${flag}`);
+        newScore.checks.push(flag);
       }
     });
 
-    if (newLog.length > 4) {
-      setScore({ total: scoreCount, feedback });
-    } else {
-      setLog([...newLog, { type: "traveler", text: profile.scenario }]);
-    }
-
     setInput("");
+    setLog(newLog);
+    setQuestionCount(prev => prev + 1);
+
+    if (questionCount + 1 >= 5) {
+      setScore({ total: newScore.total, feedback: newScore.feedback });
+    } else {
+      setScore(newScore); // store progress so far
+    }
   };
 
   return (
@@ -86,7 +95,6 @@ export default function CustomsSimulation() {
       <h1 style={{ fontSize: 24, fontWeight: 'bold' }}>Customs Officer Simulation</h1>
 
       <div style={{ backgroundColor: '#f3f3f3', padding: 10, marginTop: 10 }}>
-        {/* Hiding the profile name from the student */}
         <p><strong>Opening Statement:</strong> "{profile.scenario}"</p>
       </div>
 
@@ -98,7 +106,7 @@ export default function CustomsSimulation() {
         ))}
       </div>
 
-      {score ? (
+      {score && score.feedback ? (
         <div style={{ backgroundColor: '#e6ffe6', padding: 10, marginTop: 20 }}>
           <h2 style={{ fontSize: 18 }}>Simulation Complete</h2>
           <p>Your Score: <strong>{score.total}/100</strong></p>
