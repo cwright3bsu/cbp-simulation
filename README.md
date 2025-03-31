@@ -18,4 +18,4 @@ npm run dev
 Use [Vercel](https://vercel.com/import) to easily deploy this Vite-based app directly from your GitHub repository.
 
 ---
-(c) 2025 Carson Wright, for educational use.
+(c) 2025 Mikayla Klemp, for educational use.
