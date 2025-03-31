@@ -1,7 +1,4 @@
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 const profiles = [
   {
@@ -86,43 +83,42 @@ export default function CustomsSimulation() {
   };
 
   return (
-    <div className="p-4 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Customs Officer Simulation</h1>
-      <Card className="mb-4">
-        <CardContent className="space-y-2">
-          <p><strong>Traveler Profile:</strong> {profile.name}</p>
-          <p><strong>Opening Statement:</strong> "{profile.scenario}"</p>
-        </CardContent>
-      </Card>
+    <div style={{ maxWidth: 600, margin: '0 auto', padding: 20, fontFamily: 'Arial' }}>
+      <h1 style={{ fontSize: 24, fontWeight: 'bold' }}>Customs Officer Simulation</h1>
 
-      <div className="space-y-2">
+      <div style={{ backgroundColor: '#f3f3f3', padding: 10, marginTop: 10 }}>
+        <p><strong>Traveler Profile:</strong> {profile.name}</p>
+        <p><strong>Opening Statement:</strong> "{profile.scenario}"</p>
+      </div>
+
+      <div style={{ marginTop: 20 }}>
         {log.map((entry, index) => (
-          <div key={index} className={entry.type === "student" ? "text-blue-700" : "text-gray-700"}>
+          <div key={index} style={{ color: entry.type === "student" ? "blue" : "black", marginBottom: 8 }}>
             <strong>{entry.type === "student" ? "You" : "Traveler"}:</strong> {entry.text}
           </div>
         ))}
       </div>
 
       {score ? (
-        <Card className="mt-4">
-          <CardContent>
-            <h2 className="text-xl font-semibold">Simulation Complete</h2>
-            <p className="mt-2">Your Score: <strong>{score.total}/100</strong></p>
-            <ul className="list-disc pl-5 mt-2">
-              {score.feedback.map((f, idx) => (
-                <li key={idx}>{f}</li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+        <div style={{ backgroundColor: '#e6ffe6', padding: 10, marginTop: 20 }}>
+          <h2 style={{ fontSize: 18 }}>Simulation Complete</h2>
+          <p>Your Score: <strong>{score.total}/100</strong></p>
+          <ul>
+            {score.feedback.map((f, idx) => (
+              <li key={idx}>{f}</li>
+            ))}
+          </ul>
+        </div>
       ) : (
-        <div className="flex items-center gap-2 mt-4">
-          <Input
+        <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
+          <input
+            type="text"
             placeholder="Type your question here..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            style={{ flex: 1, padding: 8 }}
           />
-          <Button onClick={handleQuestion}>Submit</Button>
+          <button onClick={handleQuestion} style={{ padding: '8px 16px' }}>Submit</button>
         </div>
       )}
     </div>
