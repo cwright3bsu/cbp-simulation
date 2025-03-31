@@ -46,11 +46,10 @@ const profiles = [
 ];
 
 export default function CustomsSimulation() {
+  const [profile] = useState(() => profiles[Math.floor(Math.random() * profiles.length)]);
   const [log, setLog] = useState([]);
   const [input, setInput] = useState("");
   const [score, setScore] = useState(null);
-
-  const profile = profiles[Math.floor(Math.random() * profiles.length)];
 
   const handleQuestion = () => {
     const newLog = [...log, { type: "student", text: input }];
@@ -87,7 +86,7 @@ export default function CustomsSimulation() {
       <h1 style={{ fontSize: 24, fontWeight: 'bold' }}>Customs Officer Simulation</h1>
 
       <div style={{ backgroundColor: '#f3f3f3', padding: 10, marginTop: 10 }}>
-        <p><strong>Traveler Profile:</strong> {profile.name}</p>
+        {/* Hiding the profile name from the student */}
         <p><strong>Opening Statement:</strong> "{profile.scenario}"</p>
       </div>
 
