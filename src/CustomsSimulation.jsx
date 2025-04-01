@@ -51,42 +51,41 @@ export default function CustomsSimulation() {
   const [input, setInput] = useState("");
   const [score, setScore] = useState(null);
   const [questionCount, setQuestionCount] = useState(0);
+  const [scoreState, setScoreState] = useState({ total: 0, feedback: [], checks: [] });
 
   useEffect(() => {
-    // Show the opening scenario only once at the beginning
     setLog([{ type: "traveler", text: profile.scenario }]);
   }, [profile]);
 
   const handleQuestion = () => {
     const newLog = [...log, { type: "student", text: input }];
     const lower = input.toLowerCase();
-
-    let newScore = score || { total: 0, feedback: [], checks: [] };
+    const updatedScore = { ...scoreState };
 
     profile.requiredQuestions.forEach((req) => {
-      if (lower.includes(req) && !newScore.checks.includes(req)) {
-        newScore.total += 10;
-        newScore.feedback.push(`✅ Asked about: ${req}`);
-        newScore.checks.push(req);
+      if (lower.includes(req) && !updatedScore.checks.includes(req)) {
+        updatedScore.total += 10;
+        updatedScore.feedback.push(`✅ Asked about: ${req}`);
+        updatedScore.checks.push(req);
       }
     });
 
     profile.redFlags.forEach((flag) => {
-      if (lower.includes(flag) && !newScore.checks.includes(flag)) {
-        newScore.total += 15;
-        newScore.feedback.push(`🚩 Identified red flag: ${flag}`);
-        newScore.checks.push(flag);
+      if (lower.includes(flag) && !updatedScore.checks.includes(flag)) {
+        updatedScore.total += 15;
+        updatedScore.feedback.push(`🚩 Identified red flag: ${flag}`);
+        updatedScore.checks.push(flag);
       }
     });
 
-    setInput("");
+    const updatedCount = questionCount + 1;
+    setQuestionCount(updatedCount);
+    setScoreState(updatedScore);
     setLog(newLog);
-    setQuestionCount(prev => prev + 1);
+    setInput("");
 
-    if (questionCount + 1 >= 5) {
-      setScore({ total: newScore.total, feedback: newScore.feedback });
-    } else {
-      setScore(newScore); // store progress so far
+    if (updatedCount >= 5) {
+      setScore({ total: updatedScore.total, feedback: updatedScore.feedback });
     }
   };
 
